@@ -1,5 +1,5 @@
 # VULCAN N-C-H-O network for Earth-like temperatures
-# Added
+# 8.2020 Added OH + OH + M -> H2O2 + M and O_1 + CO
 # Remove HNO3 + M -> HO2 + NO + M (shouldn't use dissociation reaction at room temp)
 # that are not validated to ~300 K)
 # v106: corrected some Q yields; completed O_1 reactions; CN + M -> C + N + M (high T) removed; NO2 + CH4 -> HNO2 + CH3 removed
@@ -267,7 +267,8 @@
 495	[ O_1 + CH4 -> OH + CH3              ]  1.50E-10     0.000       0.0                        
 497	[ O_1 + CH4 -> H2CO + H2             ]  7.51E-12     0.000       0.0                        
 499	[ O_1 + C2H6 -> C2H5 + OH            ]  6.29E-10     0.000       0.0                        
-501	[ O_1 + H2O -> OH + OH               ]  1.62E-10     0.000     -65.0                        
+501	[ O_1 + H2O -> OH + OH               ]  1.62E-10     0.000     -65.0
+    [ O_1 + CO -> CO2                    ]  8.00E-11     0.000       0.0       1975TUL1893              100-2100
 503	[ O_1 + CO2 -> O + CO2               ]  7.41E-11     0.000    -120.0                        
 505	[ O_1 + NH3 -> OH + NH2              ]  2.51E-10     0.000       0.0   
 507	[ O_1 + N2O -> NO + NO               ]  7.21E-11     0.000       0.0      1997ATK/BAU1329-1499   200-350	  
@@ -326,7 +327,8 @@
 605	[ NO2 + NO3 + M -> N2O5 + M          ]  1.28E-21   -3.50         0.0      6.43E-13     0.2         0.        1997ATK/BAU1329-1499 / 1997ATK/BAU1329-1499                 200-400, 200-500          
 607	[ CH3 + O2 + M -> CH3O2 + M          ]  4.49E-31    -3.000       0.       1.21E-12     1.20        0.        1997DEM/SAN1-266 / 1992BAU/COB411-429                       200-300 / 300-800 
 609	[ NO + OH + M -> HNO2 + M            ]  1.40E-24    -2.51      -34.0      3.31E-12    -0.050     363.0       1991TSA/HER609-663 / 1991TSA/HER609-663                     200-2500 / 200-2500
-    	
+659	[ OH + OH + M -> H2O2 + M            ]  3.58E-26    -2.000       0.0      1.51E-11    -0.370       0.0       1984WAR / 	1992BAU/COB411-429                        500-2500 / 200-1500 
+	
 # 3-body reactions without high-pressure rates
 # id	# Reactions                         	A_0      B_0       C_0     	Ref												
  	

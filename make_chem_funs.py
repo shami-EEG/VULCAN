@@ -669,7 +669,7 @@ def make_jac(ni, nr, ofname):
 
     jstr = '\ndef symjac(y, M, k): \n'
     jstr += '\t nz = vulcan_cfg.nz\n'.expandtabs(3)
-    jstr += '\t dfdy = np.zeros(shape=[ni*nz, ni*nz])   \n'.expandtabs(3)
+    jstr += '\t dfdy = np.zeros(shape=(ni*nz, ni*nz))   \n'.expandtabs(3)
     jstr += '\t indx = [] \n'.expandtabs(3)
     jstr += '\t for j in range(ni): \n'.expandtabs(3)
     jstr += '\t indx.append( np.arange(j,j+ni*nz,ni) ) \n'.expandtabs(7)
@@ -702,7 +702,7 @@ def make_neg_jac(ni, nr, ofname):
 
     jstr = '\ndef neg_symjac(y, M, k): \n'
     jstr += '\t nz = vulcan_cfg.nz\n'.expandtabs(3)
-    jstr += '\t dfdy = np.zeros(shape=[ni*nz, ni*nz])   \n'.expandtabs(3)
+    jstr += '\t dfdy = np.zeros(shape=(ni*nz, ni*nz))   \n'.expandtabs(3)
     jstr += '\t indx = [] \n'.expandtabs(3)
     jstr += '\t for j in range(ni): \n'.expandtabs(3)
     jstr += '\t indx.append( np.arange(j,j+ni*nz,ni) ) \n'.expandtabs(7)
@@ -722,8 +722,8 @@ def check_conserv():
     compo = np.genfromtxt(vulcan_cfg.com_file,names=True,dtype=None)
     compo_row = list(compo['species'])
     # Convert bytes to strings
-    compo_row = [str(sp) for sp in compo_row]
-    #print (compo_row)
+    # compo_row = [sp.decode("utf-8") for sp in compo_row]
+    compo_row = [sp.decode("utf-8") if isinstance(sp, bytes) else str(sp) for sp in compo_row]
     num_atoms = len(compo.dtype.names) - 2 # dtype.names returns the column names and -2 is for 'species' and 'mass'
  
     for re in range(1,nr+1,2):

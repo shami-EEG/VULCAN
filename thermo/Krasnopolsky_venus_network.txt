@@ -1,0 +1,151 @@
+# Reduced Venus network (S-N-C-H-O-Cl) from Krasnopolsky 2012
+########################################################################################################### 
+# TODO: complete the resolidate Sx reactions (Table.2 in Krasnopolsky 2012)
+
+# In Temp, KIDA means the values are close to those on KIDA
+# in the form of k = A T^B exp(-C/T)
+# Two-body Reactions
+# id	Reactions                           	A       	B       	C      Ref 			          Temp
+
+    [ O_1 + CO2 -> O + CO2               ]  7.50E-11     0.000     -115.0      Sander et al. (2011)
+    [ O_1 + H2O -> OH + OH               ]  1.60E-10     0.000      -60.0      Sander et al. (2011)
+    [ O_1 + HCl -> OH + Cl               ]  1.50E-10     0.000        0.0      Sander et al. (2011)
+    [ O2_1 + CO2 -> O2 + CO2             ]  1.00E-20     0.000        0.0      Krasnopolsky (2010a)
+
+# done R35
+
+36	O + CO + M -> CO2 + M	2.2 × 10−33 e−1780/T	Inn (1974)	4.77 + 10	68
+37	c	7.5 × 10−33 (300/T)3.25	Smith and Robertson (2008)d	6.98 + 11	94
+38	O + O2 + M -> O3 + M	1.2 × 10−27 T−2.4	Sander et al. (2011)d	8.53 + 12	76
+39	O + O3 -> O2 + O2	8 × 10−12 e−2060/T	Sander et al. (2011)	2.02 + 8	82
+40	H + O2 + M -> HO2 + M	10−31(300/T)1.3	Sander et al. (2011)d	3.54 + 11	83
+41	H + O3 -> OH + O2	1.4 × 10−10 e−470/T	Sander et al. (2011)	1.04 + 11	92
+42	O + HO2 -> OH + O2	3 × 10−11 e200/T	Sander et al. (2011)	2.33 + 11	89
+43	O + OH -> O2 + H	1.1 × 10−10 T−0.32 e177/T	Robertson and Smith (2006)	2.66 + 11	91
+44	CO + OH -> CO2 + H	2.8 × 10−13 e−176/T	Frost et al. (1993)	1.20 + 11	77
+45	H + HO2 -> OH + OH	7.2 × 10−11	Sander et al. (2011)	9.82 + 8	90
+46	H + HO2 -> H2 + O2	6.9 × 10−12	Sander et al. (2011)	9.43 + 7	90
+47	H + HO2 -> H2O + O	1.6 × 10−12	Sander et al. (2011)	2.16 + 7	90
+48	OH + HO2 -> H2O + O2	4.8 × 10−11 e250/T	Sander et al. (2011)	6.92 + 6	87
+49	OH + O3 -> HO2 + O2	1.7 × 10−12 e−940/T	Sander et al. (2011)	1.57 + 5	83
+50	H + HCl -> H2 + Cl	6.6 × 10−16 T1.44 e−1240/T	Adusei and Fontijn (1994)	2.31 + 9	71
+51	OH + HCl -> H2O + Cl	1.7 × 10−12 e−230/T	Atkinson et al. (2007)	3.16 + 9	71
+52	O + HCl -> OH + Cl	10−11 e−3300/T	Sander et al. (2011)	1.60 + 9	69
+53	Cl + H2 -> HCl + H	3.9 × 10−11 e−2310/T	Atkinson et al. (2007)	2.40 + 9	71
+54	Cl + HO2 -> HCl + O2	1.8 × 10−11 e170/T	Atkinson et al. (2007)	6.71 + 10	75
+55	Cl + HO2 -> OH + ClO	6.3 × 10−11 e−570/T	Atkinson et al. (2007)	7.58 + 9	74
+56	OH + ClO -> HCl + O2	10−13 e600/T	Bedjanian et al. (2001)	1.16 + 6	81
+57	OH + ClO -> HO2 + Cl	1.9 × 10−11	Atkinson et al. (2007)	1.07 + 7	79
+58	H + Cl2 -> HCl + Cl	8 × 10−11 e−416/T	Berho et al. (1999)	2.49 + 10	72
+59	Cl + Cl + M -> Cl2 + M	5 × 10−26 T−2.4	Weng et al. (1987), Widman and DeGraff (1973)	1.64 + 13	72
+60	Cl + O3 -> ClO + O2	2.8 × 10−11 e−250/T	Atkinson et al. (2007)	6.89 + 12	74
+61	ClO + O -> Cl + O2	2.5 × 10−11 e110/T	Atkinson et al. (2007)	3.50 + 12	77
+62	Cl + CO + M -> ClCO + M	4 × 10−33 (300/T)3.8	Nicovich et al. (1990)d,e	5.14 + 15/4.12 + 12	71
+63	ClCO + M -> Cl + CO + M	1.2 × 10−9 e−2960/T	Nicovich et al. (1990)d	5.14 + 15	71
+64	ClCO + Cl -> CO + Cl2	1.1 × 10−10 e−706/T	Clark et al. (1966)	2.33 + 11	74
+65	ClCO + NO2 -> CO2 + NO + Cl	6 × 10−13 e600/T	Thomas and Woodman (1967)	2.80 + 9	72
+66	ClCO + ClNO -> COCl2 + NO	8 × 10−11 e−573/T	Burns and Dainton (1952)	1.49 + 8	70
+67	ClCO + Cl2 -> COCl2 + Cl	4.2 × 10−12 e−1490/T	Burns and Dainton (1952)	2.05 + 8	71
+68	ClCO + O -> CO2 + Cl	3 × 10−11	Yung and DeMore (1982)	4.23 + 11	85
+69	ClCO + S -> OCS + Cl	3 × 10−11	Assumed	2.04 + 7	74
+70	ClCO + O2 + M -> ClCO3 + M	5.7 × 10−32 e500/T/(1 + M/2 × 1018)	Yung and DeMore (1982)	3.49 + 12	74
+71	ClCO3 + Cl -> CO2 + Cl + ClO	10−11	Yung and DeMore (1982)	3.10 + 12	74
+72	ClCO3 + O -> CO2 + Cl + O2	10−11	Yung and DeMore (1982)	2.68 + 11	77
+73	ClCO3 + H -> CO2 + Cl + OH	10−11	Yung and DeMore (1982)	1.31 + 8	82
+74	COCl2 + O -> ClCO + ClO	10−14	Herron (1988)	7.13 + 7	71
+75	N + O -> NO + hν	3.3 × 10−16 T−0.5	Dalgarno et al. (1992)	7.53 + 7	99
+76	N + O + M -> NO + M	3.5 × 10−31 T−0.5	Campbell and Thrush (1966)	1.88 + 8	94
+77	N + NO -> N2 + O	2.2 × 10−11 e160/T	Wennberg et al. (1994)	3.56 + 8	93
+78	NO + O + M -> NO2 + M	10−27 T−1.5	Sander et al. (2011)d	1.17 + 12	68
+79	NO + O3 -> NO2 + O2	3 × 10−12 e−1500/T	Sander et al. (2011)	6.53 + 9	66
+80	NO + HO2 -> NO2 + OH	3.5 × 10−12 e250/T	Sander et al. (2011)	7.82 + 10	65
+81	NO2 + O -> NO + O2	5.1 × 10−12 e210/T	Sander et al. (2011)	1.36 + 12	71
+82	NO2 + O + M -> NO3 + M	0.7 × 10−26 T−1.8	Sander et al. (2011)d	1.20 + 11	69
+83	NO3 + NO -> 2 NO2	1.5 × 10−11 e170/T	Sander et al. (2011)	5.82 + 10	68
+84	NO3 + O -> NO2 + O2	10−11	Sander et al. (2011)	2.51 + 10	70
+85	N + O2 -> NO + O	2 × 10−18 T2.15 e−2560/T	Fernandez et al. (1998)	6.26 + 5	92
+86	NO + Cl + M -> ClNO + M	2 × 10−31(300/T)1.8	Sander et al. (2011)d	1.02 + 13	70
+87	ClNO + Cl -> Cl2 + NO	5.8 × 10−11 e100/T	Sander et al. (2011)	1.00 + 13	71
+88	ClNO + O -> NO + ClO	8.3 × 10−12 e−1520/T	Abbatt et al. (1989)	1.54 + 8	68
+89	NO + ClO -> NO2 + Cl	6.2 × 10−12 e295/T	Atkinson et al. (2007)	4.22 + 12	71
+90	NO + ClO2 -> ClNO + O2	4.5 × 10−11	Enami et al. (2006)	3.19 + 8	73
+91	NO2 + SCl -> NO + OSCl	2.3 × 10−11	Murrells (1988b)	8.96 + 8	70
+92	SO2 + O + M -> SO3 + M	5 × 10−22 T−3 e−2400/T	Naidoo et al. (2005)d	5.10 + 11	66
+93	SO2 + OH + M -> HSO3 + M	3.5 × 10−20 T−4.3	Sander et al. (2011)d	4.84 + 10	65
+94	SO2 + Cl + M -> ClSO2 + M	1.3 × 10−34 e940/T	Mills (1998)	8.01 + 12	69
+95	ClSO2 + H -> SO2 + HCl	10−11	Krasnopolsky (2007)	3.55 + 9	67
+96	ClSO2 + Cl -> SO2 + Cl2	10−12	Krasnopolsky (2007)	5.14 + 12	70
+97	ClSO2 + O -> SO2 + ClO	10−12	Assumed	5.56 + 11	69
+98	ClSO2 + SCl -> SO2 + SCl2	10−13	Assumed	2.32 + 7	69
+99	HSO3 + O2 -> SO3 + HO2	1.3 × 10−12 e−330/T	Sander et al. (2011)	4.84 + 10	65
+100	S + O2 -> SO + O	2.3 × 10−12	Sander et al. (2011)	2.45 + 12	72
+101	S + O3 -> SO + O2	1.2 × 10−11	Sander et al. (2011)	1.04 + 9	69
+102	S + NO + M -> SNO + M	3 × 10−32 e940/T	Goumri et al. (2004)	1.09 + 11	59
+103	SNO + O -> NO + SO	10−11	Assumed	2.68 + 9	67
+104	SO + O + M -> SO2 + M	1.3 × 10−30 (300/T)2..2	Lu et al. (2003)d	2.70 + 12	73
+105	SO + O2 -> SO2 + O	1.25 × 10−13 e−2190/T	Sander et al. (2011)	3.95 + 10	73
+106	SO + O3 -> SO2 + O2	3.4 × 10−12 e−1100/T	Sander et al. (2011)	5.01 + 9	69
+107	SO + OH -> SO2 + H	2.7 × 10−11 e335/T	Sander et al. (2011)	6.63 + 9	86
+108	SO + ClO -> SO2 + Cl	2.8 × 10−11	Sander et al. (2011)	2.86 + 12	74
+109	SO + ClO2 -> SO2 + ClO	1.9 × 10−12	Sander et al. (2011)	1.43 + 7	77
+110	SO + HO2 -> SO2 + OH	2.8 × 10−11	Yung and DeMore (1982)	1.54 + 10	70
+111	SO + SO -> SO2 + S	3.5 × 10−15	Martinez and Herron (1983)	8.05 + 9	74
+112	SO + NO2 -> SO2 + NO	1.4 × 10−11	Sander et al. (2011)	2.68 + 12	70
+113	SO + SO3 -> SO2 + SO2	2 × 10−15	Chung et al. (1975)	9.44 + 8	69
+114	SO3 + O -> SO2 + O2	2.3 × 10−16 e−487/T	Jacob and Winkler (1972)	6.88 + 6	69
+115	SO3 + H2O + H2O -> H2SO4 + H2O	2.3 × 10−43T e6540/T	Loverjoy et al. (1996)	5.71 + 11	66
+116	Cl + O2 + M -> ClO2 + M	5 × 10−33(300/T)3.1	Sander et al. (2011)d,e	4.73 + 14/1.54 + 10	73
+117	ClO2 + M -> Cl + O2 + M	7 × 10−10 e−1820/T	Sander et al. (2011)	4.73 + 14	73
+118	O + Cl2 -> ClO + Cl	7.4 × 10−12 e−1650/T	Wine et al. (1985)	4.69 + 10	71
+119	Cl + O + M -> ClO + M	5 × 10−32	Yung and DeMore (1982)	4.02 + 11	73
+120	S + S + M -> S2 + M	10−32 e206/T	Du et al. (2008)d	2.72 + 4	62
+121	S + S2 + M -> S3 + M	10−32 e206/T	k120	9.76 + 5	58
+122	S2 + S2 + M -> 4 Sa + M	10−32 e206/T	k120	1.62 + 8	56
+123	S + S3 -> S2 + S2	1.7 × 10−10 e−2800/T	Krasnopolsky (2007)	0.02	59
+124	S2 + S3 + M -> 5Sa + M	10−32 e206/T	k120	99	58
+125	O + S2 -> SO + S	2.2 × 10−11 e−84/T	Craven and Murrell (1987)	3.47 + 6	61
+126	O + S3 -> SO + S2	5 × 10−11	Assumed	14	60
+127	O + Sa -> SO	γ = 0.01	Assumed	8.41 + 7	70
+128	SO + SO + M -> S2O2 + M	10−30	Herron and Huie (1980)d	1.84 + 12	70
+129	S2O2 + O -> S2O + O2	3 × 10−14	Yung and DeMore (1982)	3.64 + 9	71
+130	S2O2 + O -> SO2 + SO	3 × 10−15	Yung and DeMore (1982)	3.64 + 8	71
+131	S2O2 + SO -> S2O + SO2	3.3 × 10−14	Herron and Huie (1980)	6.98 + 9	70
+132	S2O + O -> SO + SO	1.5 × 10−12	Singleton and Cvetanovic (1988)	3.32 + 8	70
+133	S2O + Cl -> SCl + SO	10−12	Assumed	2.31 + 9	71
+134	ClCO3 + SO -> Cl + SO2 + CO2	10−12	Assumed	3.08 + 10	74
+135	ClCO3 + SO2 -> Cl + SO3 + CO2	10−14	Assumed	1.83 + 10	69
+136	O + OCS -> SO + CO	1.6 × 10−11 e−2150/T	Atkinson et al. (2007)	4.24 + 8	65
+137	S + OCS -> S2 + CO	2.4 × 10−24 T4 e−580/T	Lu et al. (2006)	3.75 + 8	57
+138	S + CO + M -> OCS + M	3 × 10−33 e−1000/T	Krasnopolsky (2007)	5.02 + 10	58
+139	S + Cl2 -> SCl + Cl	2.8 × 10−11 e−290/T	Baulch et al. (1981)	2.84 + 10	70
+140	O + SCl -> SO + Cl	1.2 × 10−10	Murrells (1988b)	1.95 + 10	70
+141	Cl + SCl + M -> SCl2 + M	10−30	Mills (1998)	2.74 + 9	70
+142	Cl2 + SCl -> SCl2 + Cl	7 × 10−14	Murrells (1988a)	2.78 + 8	70
+143	ClO2 + O -> ClO + O2	2.4 × 10−12 e−960/T	Atkinson et al. (2007)	3.43 + 5	84
+144	ClO2 + Cl -> Cl2 + O2	10−10	Sander et al. (2011)	7.51 + 9	76
+145	ClO2 + Cl -> ClO + ClO	10−10	Assumed	7.51 + 9	76
+146	SO + Cl + M -> OSCl + M	5 × 10−33(300/T)3.1	k116	1.61 + 11	72
+147	OSCl + O -> SO2 + Cl	10−12	Assumed	1.08 + 10	72
+148	OSCl + Cl -> SO + Cl2	10−12	Assumed	1.52 + 11	72
+149	ClSO2 + ClSO2 -> SO2Cl2 + SO2	10−12	Krasnopolsky (2007)	2.31 + 12	66
+150	ClSO2 + SCl -> SO2Cl2 + S	10−13	Assumed	2.32 + 7	69
+151	NO2 + HO2 + M -> HO2NO2 + M	5 × 10−31(300/T)3.1	Christensen et al. (2004)d	2.04 + 8	66
+152	HO2NO2 + M -> HO2 + NO2 + M	10−4 e−10600/T	Zabel (1995)d	1.88 + 7	65
+153	HO2NO2 + OH -> NO2 + O2 + H2O	1.3 × 10−12 e380/T	Sander et al. (2011)	1.01 + 5	66
+
+
+# 3-body and Disscoiation Reactions
+# id	# Reactions                         	A_0     	B_0     	C_0     	A_inf   	B_inf   	C_inf		Ref 		  	Temp
+
+
+# 3-body reactions without high-pressure rates
+# id	# Reactions                         	A_0     	B_0     	C_0        	Ref 		  	   Temp												
+
+# reverse stops
+# radiative and dissociative recombination
+# id	# Reactions                         	A_0     	B_0     	C_0        	Ref
+719	[ O2_1 -> O2                         ]     2.2E-04      0.000       0.0       Lafferty et al. (1998) 
+ 
+
+# photo disscoiation (no reversals) 		            # use sp to link br_index to RXXX
+# id	# Reactions                                     sp		br_index #(starting from 1)	

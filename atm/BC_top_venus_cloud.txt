@@ -1,0 +1,9 @@
+#species flux [cm-2 s-1] # fluxes for the photochemical prodcuts at the top cloud boundary (Krasnopolsky 2007) -- all elements are balanced except for S (try s8 = +5E11/8?)
+H2SO4         +2.2E12 
+SO2           -2.2E12  - 5E11 
+H2O           -2.2E12 
+S8            +5E11 
+CO            +2.2e12  - 2*5E11 
+CO2           -2.2e12  + 2*5E11 
+
+# +: inflow; -: outflow     

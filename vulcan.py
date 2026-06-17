@@ -114,11 +114,8 @@ output = op.Output()
 # saving the config file
 output.save_cfg(dname)
 
-# construct pico
-data_atm = make_atm.f_pico(data_atm)
-# construct Tco and Kzz 
-data_atm =  make_atm.load_TPK(data_atm)
-# construct Dzz (molecular diffusion)
+# construct pico, Tco, Kzz (optional high-T cut; vulcan_cfg.P_b unchanged)
+data_atm = make_atm.setup_TPK(data_atm)
 
 # calculating the saturation pressure
 if vulcan_cfg.use_condense == True: make_atm.sp_sat(data_atm)

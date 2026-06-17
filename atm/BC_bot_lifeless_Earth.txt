@@ -1,0 +1,22 @@
+#species flux [cm-2 s-1]   v_dep [cm s-1]
+CO            1.1e9                 0.03        
+NH3              0                     1.
+N2O           1.0e+6                   0
+NO            7.0e+8                0.016
+NO2              0                    0.1
+NO3              0                    0.1
+HNO3             0                     4.
+CH4              0                     0
+SO2           9.0e8                    1.
+COS           3.0e6                  0.01 
+H2S           1.4e8                  0.015
+H2SO4         7.0e8                    1.
+N2O5             0                     4. 
+O3               0                   0.4
+H2O2             0                   0.5
+
+
+# I assume NO flux * 0.1 accouting for lighjtning only and SO2 flux * 0.1 accouting for volcanoes only
+# and COS flux * 0.06 accouting for volcanoes only  ; H2S*0.7
+# Earth bottom boundary from Hauglustain 1994 
+# Alos, Table 2.5(N2O -p.35) and 2.14(CO) in Seinfeld & Pandis  https://en.wikipedia.org/wiki/British_English

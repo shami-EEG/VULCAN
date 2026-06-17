@@ -13,15 +13,8 @@ import os, sys
 import pickle
 
 
-#vul_data = 'output/photo_Moses_HD209_nominalKzz.vul'
-#vul_data2 = 'output/res01-800nm-photo_Moses_HD209_nominalKzz.vul'
-
-# vul_data = '../output/newBC-100nmcut-cap_condenR1e-6-Paul-ini-Earth.vul'
-# vul_data2 = '../output/test-Earth.vul'
-# vul_data3 = '../output/no-Coldtrap-Earth.vul'
-
-vul_data = '../output/HD189-rtol02.vul'
-vul_data2 = '../output/HD189-vm-rtol-02.vul'
+vul_data = '../output/'
+vul_data2 = '../output/'
 
 
 # Setting the 2rd input argument as the species names to be plotted (separated by ,)
@@ -46,56 +39,85 @@ for i in range(len(tableau20)):
     
 tex_labels = {'H':'H','H2':'H$_2$','O':'O','OH':'OH','H2O':'H$_2$O','CH':'CH','C':'C','CH2':'CH$_2$','CH3':'CH$_3$','CH4':'CH$_4$','HCO':'HCO','H2CO':'H$_2$CO', 'C4H2':'C$_4$H$_2$',\
 'C2':'C$_2$','C2H2':'C$_2$H$_2$','C2H3':'C$_2$H$_3$','C2H':'C$_2$H','CO':'CO','CO2':'CO$_2$','He':'He','O2':'O$_2$','CH3OH':'CH$_3$OH','C2H4':'C$_2$H$_4$','C2H5':'C$_2$H$_5$','C2H6':'C$_2$H$_6$','CH3O': 'CH$_3$O'\
-,'CH2OH':'CH$_2$OH'}
+,'CH2OH':'CH$_2$OH', 'CH3SCH3':'DMS', 'CH3S2CH3':"DMDS",'C6H6':'C$_6$H$_6$','H2S':'H$_2$S' ,'SO2':'SO$_2$' ,'CH3S':'CH$_3$S','CH3SH':'CH$_3$SH', 'CS2':'CS$_2$' ,'NH3':'NH$_3$', 'COS':"OCS"}
 
 
 with open(vul_data, 'rb') as handle:
   data = pickle.load(handle)
-with open(vul_data2, 'rb') as handle:
-  data2 = pickle.load(handle)
-  
-# with open(vul_data3, 'rb') as handle:
-#   data3 = pickle.load(handle)
-# with open(vul_data4, 'rb') as handle:
-#   data4 = pickle.load(handle)
 
+try:
+    with open(vul_data2, 'rb') as handle:
+        data2 = pickle.load(handle)
+    vulcan_spec2 = data2['variable']['species']
+except: pass
+try:
+    with open(vul_data3, 'rb') as handle:
+        data3 = pickle.load(handle)
+    vulcan_spec3 = data3['variable']['species']
+except: pass
+        
+    
 color_index = 0
 vulcan_spec = data['variable']['species']
-vulcan_spec2 = data2['variable']['species']
 
-# vulcan_spec3 = data3['variable']['species']
-# vulcan_spec4 = data4['variable']['species']
- 
+#cea = np.genfromtxt('../cea_chem_iso1400K.txt', names=True ) # taking the first column 
+
+# for i in range(1, data['variable']['nr']):
+#     ratio = data2['variable']['k'][i] / data['variable']['k'][i]
+#     if np.amax(ratio) > 2. or np.amin(ratio) < 0.5:
+#         print (i)
+#         print (ratio)
+
 
 for color_index,sp in enumerate(plot_spec):
     if color_index == len(tableau20): # when running out of colors
         tableau20.append(tuple(np.random.rand(3)))
     if sp in tex_labels: sp_lab = tex_labels[sp]
     else: sp_lab = sp
+    if sp in data['variable']['species']:
+        plt.plot(data['variable']['ymix'][:,vulcan_spec.index(sp)], data['atm']['pco']/1.e6, color=tableau20[color_index], label=sp_lab, alpha=0.9)
+        plt.plot(data['variable']['y_ini'][:,vulcan_spec.index(sp)]/data['atm']['n_0'], data['atm']['pco']/1.e6, color=tableau20[color_index], ls=':',lw=1.2, alpha=0.9)
     
-    plt.plot(data['variable']['ymix'][:,vulcan_spec.index(sp)], data['atm']['pco']/1.e6, color=tableau20[color_index], label=sp_lab, alpha=0.9)
-    #plt.plot(data['variable']['y_ini'][:,vulcan_spec.index(sp)]/data['atm']['n_0'], data['atm']['pco']/1.e6, color=colors[color_index], ls=':',lw=1.2, alpha=0.9)
-    if sp in data2['variable']['species']:
-        plt.plot(data2['variable']['ymix'][:,vulcan_spec2.index(sp)], data2['atm']['pco']/1.e6, color=tableau20[color_index], ls='--',lw=1.2, alpha=0.9, label='2')
-        #plt.plot(data2['variable']['y_ini'][:,vulcan_spec2.index(sp)]/data2['atm']['n_0'], data2['atm']['pco']/1.e6, color=colors[color_index], ls=':',lw=1.2, alpha=0.9)
-    # if sp in data3['variable']['species']:
-    #     plt.plot(data3['variable']['ymix'][:,vulcan_spec3.index(sp)], data3['atm']['pco']/1.e6, color=tableau20[color_index], ls=':',lw=1.2, alpha=0.9, label='3')
+    # try: plt.plot(cea[sp], cea['P'], color=tableau20[color_index], ls='--',  alpha=0.9)
+    # except: pass
+    #
+    # if sp=='S':
+    #     plt.scatter(2.5238E-10, 1. , color=tableau20[color_index])
+    # elif sp=='S2':
+    #     plt.scatter(4.5788E-10, 1. , color=tableau20[color_index])
+    # elif sp=='SH':
+    #     plt.scatter(2.2775E-07, 1. , color=tableau20[color_index])
+    # elif sp=='SO':
+    #     plt.scatter(9.4945E-12, 1. , color=tableau20[color_index])
+    # elif sp=='H2S':
+    #     plt.scatter(1.3117E-04, 1. , color=tableau20[color_index])
+    #       
+    
+    try:
+        if sp in data2['variable']['species']:
+            plt.plot(data2['variable']['ymix'][:,vulcan_spec2.index(sp)], data2['atm']['pco']/1.e6, color=tableau20[color_index], ls='--',lw=1.5, alpha=0.9)
+            #plt.plot(data2['variable']['y_ini'][:,vulcan_spec2.index(sp)]/data2['atm']['n_0'], data2['atm']['pco']/1.e6, color=colors[color_index], ls=':',lw=1.2, alpha=0.9)
+    except: pass
+    try:
+        if sp in data3['variable']['species']:
+            plt.plot(data3['variable']['ymix'][:,vulcan_spec3.index(sp)], data3['atm']['pco']/1.e6, color=tableau20[color_index], ls='-.',lw=1.5, alpha=0.9)
+    except: pass        
     # if sp in data4['variable']['species']:
     #     plt.plot(data4['variable']['ymix'][:,vulcan_spec4.index(sp)], data4['atm']['pco']/1.e6, color=tableau20[color_index], ls='-.',lw=1.2, alpha=0.9, label='')
 
-      
-plt.gca().set_xscale('log')       
-plt.gca().set_yscale('log') 
-plt.gca().invert_yaxis() 
-plt.xlim((1.E-30, 0.999))
-#plt.ylim((1.E3,1.E-8))
+
+plt.gca().set_xscale('log')
+plt.gca().set_yscale('log')
+plt.gca().invert_yaxis()
+plt.xlim((1.E-12, 0.9))
+plt.ylim((data['atm']['pco'][0]/1.e6, data['atm']['pco'][-1]/1.e6))
 plt.legend(frameon=0, prop={'size':12}, loc=3)
-plt.xlabel("Mixing Ratio")
-plt.ylabel("Pressure (bar)")
+plt.xlabel("Mixing Ratio",fontsize=12)
+plt.ylabel("Pressure (bar)",fontsize=12)
 #plt.ylabel("Height (km)")
-plt.title('HD189733b')
+#plt.title('HD209b')
 plt.savefig(plot_dir + plot_name + '.png')
-plt.savefig(plot_dir + plot_name + '.eps')
+# plt.savefig(plot_dir + plot_name + '.eps')
 if vulcan_cfg.use_PIL == True:
     plot = Image.open(plot_dir + plot_name + '.png')
     plot.show()

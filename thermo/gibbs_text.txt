@@ -12,7 +12,15 @@ for i in [ _ for _ in spec_list]:
 #H/RT
 def h_RT(T,a):
     return -a[0]/T**2 + a[1]*np.log(T)/T + a[2] + a[3]*T/2. + a[4]*T**2/3. + a[5]*T**3/4. + a[6]*T**4/5. + a[8]/T
-    
+
+#H/R of species sp
+def h_RT_sp(i,T):
+    if np.any(np.logical_or(T < 200, T > 6000)):
+        #print ('T exceeds the valid range.')
+        pass
+    hRT =  (T < 1000)*h_RT(T,nasa9[i,'low']) + (T >= 1000)*h_RT(T,nasa9[i,'high'])
+    return hRT 
+	    
 #s/R    
 def s_R(T,a):
     return -a[0]/T**2/2. -a[1]/T + a[2]*np.log(T) + a[3]*T + a[4]*T**2/2. + a[5]*T**3/3. + a[6]*T**4/4. + a[9]

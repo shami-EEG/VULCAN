@@ -24,7 +24,7 @@ H2SO4_l          0                    0.2
 # NO2   before 0.1  now 0.01
    
 # Earth bottom boundary from Hauglustain 1994 
-# NH3 17.9 Tg/yr from Seinfeld (bacterial  nitrogen  fixation)
+# NH3 17.9 Tg/yr (1.79e10 Kg/yr) from Seinfeld (bacterial  nitrogen  fixation)
 #
 # (Chapter 9 Nitrogen Compounds in the Troposphere of Chemistry of the Natural Atmosphere)
 # Alos, Table 2.5(N2O -p.35) and 2.14(CO) in Seinfeld & Pandis  

@@ -1,4 +1,4 @@
-#(dyn/cm2)	(K)    	(cm2/s)
+#(dyn/cm2)	(K)    	(cm2/s)  # adopted from Moses+2011 ApJ,737-15
 Pressure	Temp	Kzz
 9.998e+08	2754.0	1.000e+10
 9.669e+08	2732.0	1.000e+10

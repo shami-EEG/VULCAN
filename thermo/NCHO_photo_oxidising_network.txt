@@ -1,6 +1,7 @@
 # VULCAN N-C-H-O network for oxidising atmospheres
 ##########################################################################################################################################################
 # logged history
+# 8.2020 added CO + HO2 -> CO2 + OH
 # 9.2019 updated and added a few CH2_1 and O_1 reactions; removing CH3NH (only CH2NH, CH2NH2, CH3NH2 are important (Tsai2018))
 # v813: Add CH3HN2, CH3HN, CH2NH2, and CH2NH; v814 reduced from v813 and reromved a few reactions involving CH2NH
 # v827: removed N_D (N2D) because I don't have its nasa9 gibbs energy (only nasa7 in venot's thesis)
@@ -298,6 +299,9 @@
 553	[ CH3O + O2 -> H2CO + HO2            ]  1.10E-13     0.       1310.0       1986TSA/HAM1087          300-2500
 555	[ HNO2 + NCO -> HNCO + NO2           ]  5.99E-12     0.          0.        1992TSA753-791           500-2500
 557	[ CH3O2 + HO2 -> CH3OOH + O2         ]  7.69E-14     0.      -1300.0       1986TSA/HAM1087          300-2500
+    [ CO + HO2 -> CO2 + OH               ]  2.51E-10     0.      11900.0       1986TSA/HAM1087          300-2500
+    [ O2 + CH4 -> CH3 + HO2              ]  6.59E-11     0.      28600.        1992BAU/COB411-429       500-2000 
+    [ O2 + C2H6 -> C2H5 + HO2            ]  6.71E-11     0.      25600.        1986TSA/HAM1087          300-2500
 559	[ O_1 + H2 -> OH + H                 ]  2.87E-10     0.000       0.0       1975TUL1893              100-2100                      
 561	[ O_1 + CH4 -> OH + CH3              ]  1.13E-10     0.000       0.0       1994DEM/SAN              200-300    
 563	[ O_1 + H2O -> OH + OH               ]  1.62E-10     0.000     -65.0       2004DUN/RAV3333-3340     235-370                       

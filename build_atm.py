@@ -5,6 +5,7 @@ from scipy import interpolate
 import scipy.optimize as sop
 import subprocess
 import pickle
+import astropy.constants as astro_const
 from shutil import copyfile 
 
 import vulcan_cfg
@@ -152,11 +153,6 @@ class InitialAbun(object):
             self.ini_fc(data_var, data_atm)
             fc = np.genfromtxt('fastchem_vulcan/output/vulcan_EQ.dat', names=True, dtype=None, skip_header=0)
             for sp in species:
-                # Atomic P hack (genfromtxt gets the Pressure as index otherwise)
-                if sp == 'P':
-                    y_ini[:,species.index(sp)] = fc['P_1']*gas_tot # this also changes data_var.y because the address of y array has passed to y_ini
-                    #print(sp,y_ini[:,species.index(sp)]/gas_tot)
-                    continue
                 if sp in fc.dtype.names:
                     y_ini[:,species.index(sp)] = fc[sp]*gas_tot # this also changes data_var.y because the address of y array has passed to y_ini
                 
@@ -299,7 +295,8 @@ class InitialAbun(object):
 class Atm(object):
     
     def __init__(self):
-        self.gs = vulcan_cfg.gs # gravity
+        #self.gs = vulcan_cfg.gs # gravity
+        self.gs = astro_const.G.cgs.value * vulcan_cfg.Mp / (vulcan_cfg.Rp)**2 # gravity
         self.P_b = vulcan_cfg.P_b
         self.P_t = vulcan_cfg.P_t
         self.type = vulcan_cfg.atm_type
@@ -488,15 +485,70 @@ class Atm(object):
         # if np.any(np.logical_or(data_atm.Tco < 200, data_atm.Tco > 6000)): print ('Temperatures exceed the valid range of Gibbs free energy.\n')
         
         return data_atm
+    
+    def apply_high_temp_cut(self, data_atm):
+        """
+        Raise P_b so the bottom temperature does not exceed T_max
+        pco[0] is the deepest level 
+        hot interiors are cut from below to ensure stability
+        """
+        T_max = getattr(vulcan_cfg, 'high_temp_cut_K', 3500.)
+        P_min = getattr(vulcan_cfg, 'high_temp_cut_P', 1e6)
         
+        deep = data_atm.pco >= P_min
+
+        if np.all(data_atm.Tco[deep] <= T_max):
+            return data_atm
         
+        Tok_deep_region = np.where(deep & (data_atm.Tco <= T_max))[0]
+        if Tok_deep_region.size == 0:
+            new_P_b = P_min
+            p_cut = None
+        else:
+            p_cut = Tok_deep_region[0]
+            new_P_b = max(float(data_atm.pco[p_cut]), P_min)
+        
+        if new_P_b >= data_atm.pco[0]:
+            return data_atm
+        
+        old_P_b = self.P_b
+        self.P_b = new_P_b
+        
+        print('Temperature profile cut at {:.0f} K (P >= {:.2e} bar) for numerical stability.'.format(
+            T_max, P_min/1e6))
+        if p_cut is not None:
+            print('  effective P_b {:.2e} -> {:.2e} bar (nz = {})'.format(
+                old_P_b/1e6, new_P_b/1e6, p_cut))
+        else:
+            print('  effective P_b {:.2e} -> {:.2e} bar (floor at P_min)'.format(
+                old_P_b/1e6, new_P_b/1e6))
+        
+        data_atm.pco = np.logspace(np.log10(new_P_b), np.log10(self.P_t), nz)
+        data_atm = self.f_pico(data_atm)
+        data_atm = self.load_TPK(data_atm)
+        
+        if np.any(data_atm.Tco > T_max):
+            print('Warning (after high_temp_cut): max Tco = {:.1f} K > {:.0f} K.'.format(
+                np.max(data_atm.Tco), T_max))
+        
+        return data_atm
+        
+    def setup_TPK(self, data_atm):
+        """Construct pico, Tco, and Kzz; optionally apply high-T bottom cut."""
+        data_atm = self.f_pico(data_atm)
+        data_atm = self.load_TPK(data_atm)
+        if getattr(vulcan_cfg, 'high_temp_cut', False):
+            data_atm = self.apply_high_temp_cut(data_atm)
+        return data_atm
+         
     # T(P) profile in Heng et al. 2014 (126)
     def TP_H14(self, pco, *args_analytical):
         
         # convert args_analytical tuple to a list so we can modify it
         T_int, T_irr, ka_0, ka_s, beta_s, beta_l = list(args_analytical) 
         
-        g = vulcan_cfg.gs
+        #g = vulcan_cfg.gs
+        g = self.gs
         P_b = vulcan_cfg.P_b 
      
         # albedo(beta_s) also affects T_irr
@@ -724,25 +776,33 @@ class Atm(object):
         for i in range(len(species)):
             # input should be float or in the form of nz-long 1D array
             atm.Dzz[:,i] = Dzz_gen(Tco_i, n0_i, self.mol_mass(species[i]))
-            atm.Dzz_cen[:,i] = Dzz_gen(Tco, atm.n_0, self.mol_mass(species[i]))
+            # atm.Dzz_cen[:,i] = Dzz_gen(Tco, atm.n_0, self.mol_mass(species[i]))
             
             # constructing the molecular weight for every species
             # this is required even without molecular weight
             atm.ms[i] = compo[compo_row.index(species[i])][-1]
         
         # setting the molecuar diffusion of the non-gaseous species to zero
-        for sp in [_ for _ in vulcan_cfg.non_gas_sp if _ in species]: atm.Dzz[:,species.index(sp)] = 0
+        for sp in [_ for _ in vulcan_cfg.non_gas_sp if _ in species]: 
+            atm.Dzz[:,species.index(sp)] = 0
+            if vulcan_cfg.use_vm_mol == True: atm.vm[:,species.index(sp)] = 0
         
         # contruct the advective component of molcular diffsion # added 2025
-        delta_T = np.roll(Tco,-1)-Tco
-        delta_T[0] = delta_T[1]; np.insert(delta_T, 0, delta_T[0])
-        
+        delta_Ti = np.roll(Tco,-1)-Tco
+        # delta_T[0] = delta_T[1]; np.insert(delta_T, 0, delta_T[0])
+        atm.delta_Ti = delta_Ti[:-1] 
+                            
         if vulcan_cfg.use_vm_mol == True:
-            atm.vm = - atm.Dzz_cen * ( atm.ms[np.newaxis,:]*atm.g[:,np.newaxis]/(Navo*kb*Tco[:,np.newaxis]) - 1./atm.Hp[:,np.newaxis] +  atm.alpha/Tco[:,np.newaxis]*(delta_T[:,np.newaxis])/atm.dz[:,np.newaxis]  )
-            if vulcan_cfg.use_condense == True:
-                non_gas_indices = [species.index(sp) for sp in vulcan_cfg.non_gas_sp]
-                atm.vm[:,non_gas_indices] = 0
-        # contruct the advective component of molcular diffsion
+            # 1/the scale height of species i
+            species_Hi = atm.ms[np.newaxis,:]*atm.g[:,np.newaxis]/(Navo*kb*Tco[:,np.newaxis])
+            # averaing H first then converted back to 1/Hi
+            Hi_interf = 1./(0.5*(1./species_Hi + 1./np.roll(species_Hi,-1)) )
+            # 1/the scale height of species i at the interface
+            Hi_interf = Hi_interf[:-1,:] 
+
+            atm.vm = - atm.Dzz * ( Hi_interf - 1./atm.Hpi[:,np.newaxis] +  atm.alpha[np.newaxis,:]/atm.Ti[:,np.newaxis]*(atm.delta_Ti[:,np.newaxis])/atm.dzi[:,np.newaxis]  )
+            
+            
                 
     
     def BC_flux(self, atm):

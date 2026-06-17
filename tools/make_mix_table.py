@@ -10,7 +10,7 @@ with open(vul, 'rb') as handle:
   vul = pickle.load(handle)
   
 species = vul['variable']['species'] 
-out_species = ['CH4', 'CO', 'CO2', 'C2H2', 'H2', 'H', 'H2O', 'HCN', 'He', 'NH3', 'O2', 'NO', 'OH']
+out_species = species
 
 ost = '{:<8s}'.format('(dyn/cm2)')  + '{:>9s}'.format('(K)') + '{:>9s}'.format('(cm)') + '\n'
 ost += '{:<8s}'.format('Pressure')  + '{:>9s}'.format('Temp')+ '{:>9s}'.format('Hight')

@@ -836,7 +836,7 @@ class Integration(object):
             if vulcan_cfg.use_adapt_rtol == True and para.count%10 == 0:
                 if max([np.abs(loss) for loss in var.atom_loss.values()]) >= self.loss_criteria: 
                     self.loss_criteria *= 2.
-                    vulcan_cfg.rtol *= 0.75
+                    vulcan_cfg.rtol *= 0.5
                     vulcan_cfg.rtol = max(vulcan_cfg.rtol, vulcan_cfg.rtol_min)
                     if vulcan_cfg.rtol != vulcan_cfg.rtol_min:
                         print ('rtol reduced to ' + str(vulcan_cfg.rtol))
@@ -942,6 +942,7 @@ class Integration(object):
         return var
         
     def update_mu_dz(self, var, atm, make_atm): #y, ni, spec, Tco, pco
+        # Also update vm
         
         # gravity
         gz = atm.g
@@ -980,7 +981,16 @@ class Integration(object):
             atm.Ti = Ti[:-1]
             Hpi = 0.5*(Hp + np.roll(Hp,-1))
             atm.Hpi = Hpi[:-1]
-        
+            
+            if vulcan_cfg.use_vm_mol == True:
+                # 1/the scale height of species i
+                species_Hi = atm.ms[np.newaxis,:]*atm.g[:,np.newaxis]/(Navo*kb*Tco[:,np.newaxis])
+                # average H at adjacent cell centers, then convert back to 1/H at the interface
+                Hi_interf = 1./(0.5*(1./species_Hi + 1./np.roll(species_Hi,-1,axis=0)) )
+                # 1/the scale height of species i at the interface
+                Hi_interf = Hi_interf[:-1,:] 
+                atm.vm = - atm.Dzz * ( Hi_interf - 1./atm.Hpi[:,np.newaxis] +  atm.alpha[np.newaxis,:]/atm.Ti[:,np.newaxis]*(atm.delta_Ti[:,np.newaxis])/atm.dzi[:,np.newaxis]  )
+            
         return atm
     
     def update_phi_esc(self, var, atm): # updating diffusion-mimited escape
@@ -1062,27 +1072,96 @@ class Integration(object):
             
         return False
     
+    def _save_hybrid_defaults(self):
+        if not getattr(vulcan_cfg, 'hybrid_defaults_saved', False):
+            vulcan_cfg.count_min_default = vulcan_cfg.count_min
+            vulcan_cfg.count_max_default = vulcan_cfg.count_max
+            vulcan_cfg.runtime_default = vulcan_cfg.runtime
+            vulcan_cfg.hybrid_defaults_saved = True
+    
+    def _reset_hybrid_cfg(self):
+        if getattr(vulcan_cfg, 'hybrid_run', False):
+            vulcan_cfg.use_vm_mol = True
+            vulcan_cfg.use_hybrid_vm_mol = True
+            vulcan_cfg.hybrid_run = False
+            if getattr(vulcan_cfg, 'hybrid_defaults_saved', False):
+                vulcan_cfg.count_min = vulcan_cfg.count_min_default
+                vulcan_cfg.count_max = vulcan_cfg.count_max_default
+                vulcan_cfg.runtime = vulcan_cfg.runtime_default
+                vulcan_cfg.hybrid_defaults_saved = False
+    
     def stop(self, var, para, atm):
         '''
         To check the convergence criteria and stop the integration 
         '''
         if var.t > vulcan_cfg.trun_min and para.count > vulcan_cfg.count_min and self.conv(var, para, atm):
-            print ('Integration successful with ' + str(para.count) + ' steps and long dy, long dydt = ' + str(var.longdy) + ' ,' + str(var.longdydt) + '\nActinic flux change: ' + '{:.2E}'.format(var.aflux_change)) 
-            self.output.print_end_msg(var, para)
-            para.end_case = 1
-            return True
+            
+            if vulcan_cfg.use_vm_mol == True and vulcan_cfg.use_hybrid_vm_mol == True:
+                print ("After ------- %s seconds -------" % ( time.time()- para.start_time ) + ' s CPU time')
+                print ('Upwind diffusion integration successful with ' + str(para.count) + ' steps and long dy, long dydt = ' + str(var.longdy) + ' ,' + str(var.longdydt) + '\nActinic flux change: ' + '{:.2E}'.format(var.aflux_change)) 
+                print ('Now starts central diff molecular diffusion...')
+                self._save_hybrid_defaults()
+                vulcan_cfg.hybrid_run = True
+                vulcan_cfg.use_vm_mol = False
+                vulcan_cfg.use_hybrid_vm_mol = False
+                vulcan_cfg.count_min = para.count + 100
+                vulcan_cfg.count_max = para.count + 2000
+                return False
+                
+            else:
+                print ('Integration successful with ' + str(para.count) + ' steps and long dy, long dydt = ' + str(var.longdy) + ' ,' + str(var.longdydt) + '\nActinic flux change: ' + '{:.2E}'.format(var.aflux_change)) 
+                self.output.print_end_msg(var, para)
+                para.end_case = 1
+                self._reset_hybrid_cfg()
+                return True
+            
         elif var.t > vulcan_cfg.runtime:
-            print ("After ------- %s seconds -------" % ( time.time()- para.start_time ) + ' s CPU time')
-            print ('Integration not completed...\nMaximal allowed runtime exceeded ('+ \
-            str (vulcan_cfg.runtime) + ' sec)!')
-            para.end_case = 2
-            return True
+            
+            if vulcan_cfg.use_vm_mol == True and vulcan_cfg.use_hybrid_vm_mol == True:
+                self._save_hybrid_defaults()
+                vulcan_cfg.hybrid_run = True
+                print ("After ------- %s seconds -------" % ( time.time()- para.start_time ) + ' s CPU time')
+                print ('Upwind diffusion integration finished with maximum runtime' + str(vulcan_cfg.runtime) + ' sec and long dy, long dydt = ' + str(var.longdy) + ' ,' + str(var.longdydt) + '\nActinic flux change: ' + '{:.2E}'.format(var.aflux_change)) 
+                print ('Now starts central diff molecular diffusion...')
+                vulcan_cfg.use_vm_mol = False
+                vulcan_cfg.use_hybrid_vm_mol = False
+                vulcan_cfg.count_min = para.count + 100
+                vulcan_cfg.count_max = para.count + 1000
+                vulcan_cfg.runtime += vulcan_cfg.runtime *0.1
+                return False
+            
+            else:
+                # print ("After ------- %s seconds -------" % ( time.time()- para.start_time ) + ' s CPU time')
+                # print ('Integration not completed...\nMaximal allowed runtime exceeded ('+ \
+                str (vulcan_cfg.runtime) + ' sec)!\n')
+                para.end_case = 2
+                self.output.print_unconverged_msg(var, para)
+                self._reset_hybrid_cfg()
+                return True
+            
         elif para.count > vulcan_cfg.count_max:
-            print ("After ------- %s seconds -------" % ( time.time()- para.start_time ) + ' s CPU time')
-            print ('Integration not completed...\nMaximal allowed steps exceeded (' + \
-            str (vulcan_cfg.count_max) + ')!')
-            para.end_case = 3
-            return True
+            
+            if vulcan_cfg.use_vm_mol == True and vulcan_cfg.use_hybrid_vm_mol == True:
+                self._save_hybrid_defaults()
+                vulcan_cfg.hybrid_run = True
+                print ("After ------- %s seconds -------" % ( time.time()- para.start_time ) + ' s CPU time')
+                print ('Upwind diffusion integration finished with maximum' + str(para.count) + ' steps and long dy, long dydt = ' + str(var.longdy) + ' ,' + str(var.longdydt) + '\nActinic flux change: ' + '{:.2E}'.format(var.aflux_change)) 
+                print ('Now starts central diff molecular diffusion...')
+                vulcan_cfg.use_vm_mol = False
+                vulcan_cfg.use_hybrid_vm_mol = False
+                vulcan_cfg.count_min = para.count + 100
+                vulcan_cfg.count_max = para.count + 1000
+                return False
+            
+            else:
+                #print ("After ------- %s seconds -------" % ( time.time()- para.start_time ) + ' s CPU time')
+                #print ('Integration not completed...\nMaximal allowed steps exceeded (' + \
+                str (vulcan_cfg.count_max) + ')!\n')
+                para.end_case = 3
+                self.output.print_unconverged_msg(var, para) 
+                self._reset_hybrid_cfg()
+                return True
+                
     
     def save_step(self, var, para):
         '''
@@ -1818,7 +1897,7 @@ class ODESolver(object):
         Hpi = atm.Hpi
         
         vm = atm.vm
-        # shape: nz x ni
+        # shape: nz-1 x ni
         # vm defined in build.py
         # vm = - Dzz_cen * ( ms[np.newaxis,:]*g[:,np.newaxis]/(Navo*kb*Tco[:,np.newaxis]) - 1./Hp[:,np.newaxis] +  alpha/Tco[:,np.newaxis]*(delta_T[:,np.newaxis])/dz[:,np.newaxis]  )
 
@@ -3173,14 +3252,14 @@ class Output(object):
         if vulcan_cfg.use_shark == True: print ("It's a long journey to this shark planet. Don't stop bleeding.")
         print ('------ Live long and prosper \V/ ------') 
 
-    def print_unconverged_msg(self, var, para, case): 
+    def print_unconverged_msg(self, var, para): 
         
-        if case == 2:
+        if para.end_case == 2:
             print ("After ------- %s seconds -------" % ( time.time()- para.start_time ) + ' s CPU time')
             print (vulcan_cfg.out_name[:-4] + ' did not reach steady-state:')
             print ('long dy = ' + str(var.longdy) + ' and long dy/dt = ' + str(var.longdydt) )
             print ('Integration stopped before converged...\nMaximal allowed runtime exceeded ('+ f"{vulcan_cfg.runtime:.1e}" + ' sec)')
-        elif case == 3:
+        elif para.end_case == 3:
             print ("After ------- %s seconds -------" % ( time.time()- para.start_time ) + ' s CPU time')
             print (vulcan_cfg.out_name[:-4] + ' did not reach steady-state:')
             print ('long dy = ' + str(var.longdy) + ' and long dy/dt = ' + str(var.longdydt) )
@@ -3197,8 +3276,9 @@ class Output(object):
         print ('delta rejected counter:')
         print (para.delta_count)
        
-        if case not in (2, 3):
-            raise RuntimeError(f"Unconverged case undefined (case={case})") # more robust than printing warning
+        if para.end_case not in (2, 3):
+            raise RuntimeError(f"Unconverged case undefined (case={para.end_case})") # more robust than printing warning
+
         
 
     def save_cfg(self, dname):

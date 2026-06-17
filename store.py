@@ -129,10 +129,10 @@ class AtmData(object):
         self.ms = np.empty(ni) # molecular weight for every species
         self.Dzz = np.zeros((nz-1,ni)) # molecular diffusion (nz,ni)
         self.Dzz_cen = np.zeros((nz,ni)) # molecular diffusion (nz,ni)
-        self.vm = np.zeros((nz,ni)) # molecular diffusion (nz,ni)
+        self.vm = np.zeros((nz-1,ni)) # molecular diffusion advective component (nz,ni)
         self.vs = np.zeros((nz-1,ni)) # the settling velocity
         self.alpha = np.zeros(ni) # thermal diffusion factor = -0.25 for every species except for H and H2 (defined in mol_diff() in build_atm.py)
-        self.gs = vulcan_cfg.gs # the gravitational acceleration at the surface or at 1 bar
+        self.gs = 0 # the gravitational acceleration at the surface or at 1 bar
         self.g = np.zeros(nz) # g(z) 
         
         self.top_flux = np.zeros(ni) # the assigned flux at the top boundary
