@@ -1133,7 +1133,7 @@ class Integration(object):
             else:
                 # print ("After ------- %s seconds -------" % ( time.time()- para.start_time ) + ' s CPU time')
                 # print ('Integration not completed...\nMaximal allowed runtime exceeded ('+ \
-                str (vulcan_cfg.runtime) + ' sec)!\n')
+                # str (vulcan_cfg.runtime) + ' sec)!\n')
                 para.end_case = 2
                 self.output.print_unconverged_msg(var, para)
                 self._reset_hybrid_cfg()
@@ -1156,7 +1156,7 @@ class Integration(object):
             else:
                 #print ("After ------- %s seconds -------" % ( time.time()- para.start_time ) + ' s CPU time')
                 #print ('Integration not completed...\nMaximal allowed steps exceeded (' + \
-                str (vulcan_cfg.count_max) + ')!\n')
+                # str (vulcan_cfg.count_max) + ')!\n')
                 para.end_case = 3
                 self.output.print_unconverged_msg(var, para) 
                 self._reset_hybrid_cfg()
