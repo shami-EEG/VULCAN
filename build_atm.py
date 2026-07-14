@@ -120,6 +120,9 @@ class InitialAbun(object):
                                 met_scale = 1.
                                 print ("fastchem_met_scale not specified in vulcan_cfg. Using solar metallicity for other elements not included in vulcan.")
                             
+                            if not getattr(vulcan_cfg, "use_other_ele", False):
+                                met_scale = 0
+                            
                             new_ratio = float(sol_ratio) + np.log10(met_scale)
                             line = sp + '\t' + "{0:.4f}".format(new_ratio) + '\n'
                             
