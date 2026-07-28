@@ -91,7 +91,8 @@ class InitialAbun(object):
             ele_list = list(vulcan_cfg.atom_list)
             ele_list.remove('H')
             
-            fc_list = ['C', 'N', 'O', 'S', 'P', 'Si', 'Ti','V','Cl','K','Na','Mg','F','Ca','Fe']
+            # need to be exactly the same order as element_abundances_vulcan.dat
+            fc_list = ['C', 'N', 'O', 'P', 'S', 'Si', 'Ti','V','Cl','K','Na','Mg','F','Ca','Fe']
             
             if vulcan_cfg.use_solar == True: 
                 new_str = f.read() # read in as a string
