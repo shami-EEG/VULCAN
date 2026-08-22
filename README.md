@@ -10,10 +10,10 @@ This is currently a release candidate version. Any questions or feedbacks is wel
 * Running with realtime plotting:\
 ![Running with realtime plotting](demo/demo.gif)
 ## Requirements
-VULCAN is developed with Python 3 but has been tested compatible with Python 2.7. It is advised to run it on Python 3 if possible.
-Two very useful tools to set up python environments:\
-[Pip](https://pip.pypa.io/en/stable/) - package installer for Python\
-[Anaconda](https://docs.continuum.io/) - virtual environment manager
+VULCAN is developed with Python 3 but has been tested compatible with Python 2.7. Python 3 is recommended.
+Useful tools for setting up a Python environment:
+- [conda](https://docs.conda.io/) — environment and package manager (from Miniconda, Miniforge, or Anaconda)
+- [Pip](https://pip.pypa.io/en/stable/) — Python package installer
 
 VULCAN requires the following python packages:
 - numpy
@@ -21,18 +21,16 @@ VULCAN requires the following python packages:
 - Sympy
 - matplotlib
 - PIL/Pillow (optional: for interactive plotting)
-and the embeded [FastChem](https://github.com/exoclime/FastChem) requires a standard C++ compiler, like g++ or Clang.
+and the embeded [FastChem](https://github.com/exoclime/FastChem) requires a standard C++ compiler, such as g++ or Clang.
 
-If any of the python packages are missing, you can install the full SciPy Stack via Pip, e.g.
-```bash
-pip3 install --upgrade pip
-```
-```bash
-pip3 install --user numpy scipy matplotlib ipython jupyter pandas sympy nose
-```
-The above commands update pip and install SciPy via pip (use pip instead of pip3 if running with python2). Further information can be found at http://www.scipy.org/install.html
 
-PIL or Pillow is a plotting library. If installed, the plots will be conveniently shown by the os-built-in image viewer. See https://github.com/python-pillow/Pillow for more information.  
+Create a conda environment with the Python packages:
+```bash
+conda create -n vulcan python=3 numpy scipy sympy matplotlib pillow
+conda activate vulcan
+```
+
+Pillow is included so plots can open in the system image viewer. See https://github.com/python-pillow/Pillow for more information. 
 
 ## Quick Demo
 
@@ -122,6 +120,15 @@ See the included T-P files of HD 189733b and HD 209458b in `/atm` for example.
 The stellar UV flux is stored in /atm/stellar_flux, with the first column being weavelength in nm and the second column	being flux in ergs/cm**2/s/nm.
 The thermodynamics data and cross sections are stored in /thermo/NASA9 and /thermo/photo_cross, respectively. Change at your own risk!
 If constant fluxes for certain species are used, the files are also placed in /atm, in the format of species, flux (cm-2 s-1), and deposite velocity (cm s-1).
+
+#### Planetary parameters
+
+`Rp` and `Mp` specify the planetary radius and mass, primarily for calculateing the gravity and scale height throughout the atmosphere:
+- `Rp` is the planetary radius in centimeters. E.g., `7.1492E9` represents 1 Jupiter radii.
+- `Mp` is the planetary mass in grams. E.g., `1.8981E30` represents 1 Jupiter masses.
+
+#### Molecular-diffusion scheme (updated 2026.08 )
+Setting `use_vm_mol = True` (with `use_moldiff = True`) applies a first-order upwind scheme to the molecular-diffusion velocity. This option can improve numerical stability and accelerates intergration, but introduces stronger numerical diffusion. Setting use_hybrid_vm_mol = True allows the model to approach steady state more quickly using the first-order upwind scheme before switching to the more accurate central-difference scheme.   
 
 
 ### Editing or Using a different chemical network
