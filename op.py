@@ -3259,11 +3259,16 @@ class Output(object):
             print (vulcan_cfg.out_name[:-4] + ' did not reach steady-state:')
             print ('long dy = ' + str(var.longdy) + ' and long dy/dt = ' + str(var.longdydt) )
             print ('Integration stopped before converged...\nMaximal allowed runtime exceeded ('+ f"{vulcan_cfg.runtime:.1e}" + ' sec)')
+        
         elif para.end_case == 3:
-            print ("After ------- %s seconds -------" % ( time.time()- para.start_time ) + ' s CPU time')
-            print (vulcan_cfg.out_name[:-4] + ' did not reach steady-state:')
-            print ('long dy = ' + str(var.longdy) + ' and long dy/dt = ' + str(var.longdydt) )
-            print ('Integration stopped before converged...\nMaximal allowed steps exceeded ('+ str(vulcan_cfg.count_max) + ' steps)')
+            if getattr(vulcan_cfg, "hybrid_run", False):
+                print (vulcan_cfg.out_name[:-4] + ' completed the final central difference scheme integration with 2000 steps.')
+                print ('long dy = ' + str(var.longdy) + ' and long dy/dt = ' + str(var.longdydt) )
+            else:
+                print ("After ------- %s seconds -------" % ( time.time()- para.start_time ) + ' s CPU time')
+                print (vulcan_cfg.out_name[:-4] + ' did not reach steady-state:')
+                print ('long dy = ' + str(var.longdy) + ' and long dy/dt = ' + str(var.longdydt) )
+                print ('Integration stopped before converged...\nMaximal allowed steps exceeded ('+ str(vulcan_cfg.count_max) + ' steps)')        
         
         print ('total atom loss:')
         for atom in vulcan_cfg.atom_list: 
