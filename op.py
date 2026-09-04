@@ -3250,7 +3250,7 @@ class Output(object):
         print ('delta rejected counter:')
         print (para.delta_count)
         if vulcan_cfg.use_shark == True: print ("It's a long journey to this shark planet. Don't stop bleeding.")
-        print ('------ Live long and prosper \V/ ------') 
+        print (r'------ Live long and prosper \V/ ------') 
 
     def print_unconverged_msg(self, var, para): 
         
