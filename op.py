@@ -680,7 +680,7 @@ class ReadRate(object):
                                 if np.isinf(log_highT ): log_highT = -100.
                                 
                                 inter_T = interpolate.interp1d([Tlow,Thigh], [log_lowT,log_highT], axis=0) # at wavelength ld, interpolating between Tlow and Thigh in log10
-                                if inter_T(Tz) == -100: var.cross_T[sp][lev, n] == 0.
+                                if inter_T(Tz) == -100: var.cross_T[sp][lev, n] = 0.
                                 else: var.cross_T[sp][lev, n] = 10**(inter_T(Tz))
                                 
                                 # update: inerpolation in log10 for cross sections and linearly between Tlow and Thigh 
