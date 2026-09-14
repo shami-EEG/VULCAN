@@ -192,8 +192,10 @@ def make_chemdf(re_table, ofname):
                     mol_prod.append(mol)
 
             j += 2
-        
-            reac_args = list(set(mol_reac + mol_prod)) #Remove repeating elements
+
+            reac.sort()
+            prod.sort()
+            reac_args = sorted(set(mol_reac + mol_prod)) #Remove repeating elements
             # because set exclude duplicates
 
             # v_i() is the rate equation function for i
@@ -356,12 +358,12 @@ def make_chemdf(re_table, ofname):
     ofstr += "## Mapping ##\n\n"
     for term in chem_dict:
         chem_dict_r.update({chem_dict[term] : term})
-    for term in reac_dict:
+    for term in sorted(reac_dict):
         ofstr += chem_dict_r[term] + ': y[' + str(term) + '], '
     ofstr+='\n\n'
-    for term in reac_dict:
+    for term in sorted(reac_dict):
         ofstr += chem_dict_r[term] + "\t" + str(term) + "\t" + reac_dict[term] + "\n"
-    for i in chem_dict_r:
+    for i in sorted(chem_dict_r):
         spec_list.append(chem_dict_r[i])
   
     ofstr += "'''\n\n"
@@ -380,7 +382,7 @@ def make_chemdf(re_table, ofname):
     ost += '\t y = np.transpose(y) \n'.expandtabs(3)
     ost += '\t dydt = np.zeros(shape=y.shape) \n'.expandtabs(3)
 
-    for num in reac_dict:
+    for num in sorted(reac_dict):
         ost += '\t dydt['.expandtabs(3) + str(num) + '] = ' + reac_dict[num] + '\n'
 
     ost += '\t dydt = np.transpose(dydt) \n'.expandtabs(3)
@@ -388,7 +390,7 @@ def make_chemdf(re_table, ofname):
 
     ost += 'def df(y, M, k):\n'
     ost += '\t df_list = [] \n'.expandtabs(3)
-    for num in exp_reac_dict:
+    for num in sorted(exp_reac_dict):
         ost += '\t df_list.append( '.expandtabs(3) +exp_reac_dict[num] + ' )\n'    
     ost += '\t return df_list \n\n'.expandtabs(3)
 
@@ -503,8 +505,10 @@ def make_Gibbs(re_table, gibbs_text, ofname):
 
 
             j += 2
-        
-            reac_args = list(set(mol_reac + mol_prod)) #Remove repeating elements
+
+            reac.sort()
+            prod.sort()
+            reac_args = sorted(set(mol_reac + mol_prod)) #Remove repeating elements
             # because set exclude duplicates
 
             # v_i() is the rate equation function for i
@@ -641,7 +645,7 @@ def make_Gibbs(re_table, gibbs_text, ofname):
     gstr += '# Gibbs free energy:\n'
     gstr += 'def Gibbs(i,T):\n'
     gstr += '\t G={}\n'.expandtabs(3)
-    for _ in gibbs_dict:
+    for _ in sorted(gibbs_dict):
         gstr += '\t G['.expandtabs(3) +str(_)+'] = lambda T: ' + str(gibbs_dict[_]) + '\n'
 
     gstr += '\t return G[i](T)\n\n'.expandtabs(3)
