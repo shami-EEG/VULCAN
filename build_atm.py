@@ -918,7 +918,7 @@ class Atm(object):
                 h2s_l_log10 = -1145./T + 7.94746 - 0.00322*T     # 187.6 < T <= 213.2
                 
                 saturate_p = 10**( (T <= 187.6)*h2s_ice_log10 + (T > 187.6)*h2s_l_log10 )
-                atm.sat_p[sp] = saturate_p * 0.001333 * 1.e6
+                atm.sat_p[sp] = saturate_p * 0.01333 * 1.e6
 
             
 if __name__ == "__main__":
